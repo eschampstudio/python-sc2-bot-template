@@ -24,31 +24,11 @@ copy_zip_to_folder = "publish"
 
 # the files to include in the zip file
 files_and_directories_to_zip = [
-    "ladderbots.json",  # generated when this script is run
     "python-sc2/sc2",
     "bot",
     "requirements.txt",
     "run.py",
 ]
-
-# the template for the ladderbots.json file that will be generated
-ladderbots_json_template = """{
-    "Bots": {
-        "[NAME]": {
-            "Race": "[RACE]",
-            "Type": "Python",
-            "RootPath": "./",
-            "FileName": "run.py",
-            "Args": "-O",
-            "Debug": true,
-            "SurrenderPhrase": "(pineapple)"
-        }
-    }
-}"""
-
-
-def generate_ladderbots_json():
-    return ladderbots_json_template.replace("[NAME]", bot.NAME).replace("[RACE]", str(bot.RACE).split(".")[1])
 
 
 def zipdir(path: str, ziph: zipfile.ZipFile, remove_path: Optional[str] = None):
@@ -74,10 +54,6 @@ def create_ladder_zip():
     files_to_zip = []
     directories_to_zip = []
 
-    f = open("ladderbots.json", "w+")
-    f.write(generate_ladderbots_json())
-    f.close()
-
     for file in files_and_directories_to_zip:
         if not os.path.exists(file):
             raise ValueError(f"'{file}' does not exist.")
@@ -94,8 +70,6 @@ def create_ladder_zip():
     for directory in directories_to_zip:
         zipdir(directory, zipf)
     zipf.close()
-
-    os.remove("ladderbots.json")
 
     if not os.path.exists(copy_zip_to_folder):
         os.mkdir(copy_zip_to_folder)
